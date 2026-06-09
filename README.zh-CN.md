@@ -162,9 +162,11 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 仓库里已经包含 release workflow。发布新版本时运行：
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag vX.Y.Z
+git push origin vX.Y.Z
 ```
+
+把 `vX.Y.Z` 替换为下一个语义化版本号，例如 `v0.1.4`。
 
 GitHub Actions 会自动运行测试，构建两个 macOS 二进制文件，创建 GitHub Release，并上传文件。
 

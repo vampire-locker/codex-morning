@@ -183,10 +183,28 @@ func requireDarwin() error {
 }
 
 func resolveWorkdir(value string) (string, error) {
+	var path string
+	var err error
 	if value == "" {
-		return os.Getwd()
+		path, err = os.Getwd()
+	} else {
+		path, err = filepath.Abs(value)
 	}
-	return filepath.Abs(value)
+	if err != nil {
+		return "", fmt.Errorf("resolve workdir: %w", err)
+	}
+
+	info, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "", fmt.Errorf("workdir does not exist: %s", path)
+		}
+		return "", fmt.Errorf("inspect workdir %s: %w", path, err)
+	}
+	if !info.IsDir() {
+		return "", fmt.Errorf("workdir is not a directory: %s", path)
+	}
+	return path, nil
 }
 
 func resolveCodexBin(value string) string {

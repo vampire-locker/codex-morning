@@ -162,9 +162,11 @@ For a beginner-friendly release, publish prebuilt binaries for:
 This repository includes a release workflow. To publish a new release:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag vX.Y.Z
+git push origin vX.Y.Z
 ```
+
+Replace `vX.Y.Z` with the next semantic version, such as `v0.1.4`.
 
 GitHub Actions will run tests, build both macOS binaries, create a GitHub Release, and upload the files.
 
