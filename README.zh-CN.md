@@ -139,6 +139,15 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 - `darwin/arm64`：Apple Silicon Mac
 - `darwin/amd64`：Intel Mac
 
+仓库里已经包含 release workflow。发布新版本时运行：
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+GitHub Actions 会自动运行测试，构建两个 macOS 二进制文件，创建 GitHub Release，并上传文件。
+
 Homebrew 可以等 tap 真正发布后再补。不要在 README 里提前写还不能运行的 Homebrew 命令。
 
 ## 许可证

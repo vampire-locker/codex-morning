@@ -139,6 +139,15 @@ For a beginner-friendly release, publish prebuilt binaries for:
 - `darwin/arm64` for Apple Silicon Macs
 - `darwin/amd64` for Intel Macs
 
+This repository includes a release workflow. To publish a new release:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+GitHub Actions will run tests, build both macOS binaries, create a GitHub Release, and upload the files.
+
 Homebrew can be added later after a tap is published. Avoid documenting a Homebrew command before it works.
 
 ## License
