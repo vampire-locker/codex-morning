@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/vampire-locker/codex-morning/internal/i18n"
 )
 
 type Agent struct {
@@ -21,26 +23,26 @@ type Agent struct {
 func ParseHHMM(value string) (int, int, error) {
 	parts := strings.Split(value, ":")
 	if len(parts) != 2 {
-		return 0, 0, fmt.Errorf("时间必须使用 HH:MM 格式")
+		return 0, 0, fmt.Errorf(i18n.Text("时间必须使用 HH:MM 格式", "time must use HH:MM"))
 	}
 	hour, err := strconv.Atoi(parts[0])
 	if err != nil || hour < 0 || hour > 23 {
-		return 0, 0, fmt.Errorf("小时必须在 0-23 之间")
+		return 0, 0, fmt.Errorf(i18n.Text("小时必须在 0-23 之间", "hour must be 0-23"))
 	}
 	minute, err := strconv.Atoi(parts[1])
 	if err != nil || minute < 0 || minute > 59 {
-		return 0, 0, fmt.Errorf("分钟必须在 0-59 之间")
+		return 0, 0, fmt.Errorf(i18n.Text("分钟必须在 0-59 之间", "minute must be 0-59"))
 	}
 	return hour, minute, nil
 }
 
 func PlistPath(label string) (string, error) {
 	if label == "" {
-		return "", fmt.Errorf("label 不能为空")
+		return "", fmt.Errorf(i18n.Text("label 不能为空", "label is required"))
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return "", fmt.Errorf("解析用户主目录失败：%w", err)
+		return "", fmt.Errorf(i18n.Text("解析用户主目录失败：%w", "resolve home directory: %w"), err)
 	}
 	return filepath.Join(home, "Library", "LaunchAgents", label+".plist"), nil
 }

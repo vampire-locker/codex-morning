@@ -14,10 +14,11 @@
 
 实际例子：如果你上午 10 点上班，12 点到 14 点休息，可以在早上 9 点提前激活使用 Codex。这样 5 小时使用窗口刚好在下午 14 点刷新，回到工位后可以继续使用。具体可用额度和刷新时间仍以 Codex 及你的账号套餐显示为准。
 
-默认执行时间是 09:00，默认提示词是：
+默认执行时间是 09:00。终端提示和默认 Codex 提示词会根据系统语言自动选择：
 
 ```text
-codex，早上好
+中文系统：codex，早上好
+其他语言系统：codex, good morning
 ```
 
 ## 环境要求
@@ -110,11 +111,13 @@ codex-morning status
 codex-morning uninstall
 ```
 
-`run-once` 会立即打开一个新的 Terminal 窗口并运行：
+`run-once` 会立即打开一个新的 Terminal 窗口，并使用当前系统语言对应的默认提示词运行 Codex。例如中文系统会运行：
 
 ```bash
 codex "codex，早上好"
 ```
+
+其他语言系统默认会运行 `codex "codex, good morning"`。
 
 `uninstall` 会卸载并删除 LaunchAgent。
 

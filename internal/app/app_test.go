@@ -20,6 +20,8 @@ func TestResolveWorkdirReturnsAbsoluteDirectory(t *testing.T) {
 }
 
 func TestResolveWorkdirRejectsMissingDirectory(t *testing.T) {
+	setChineseLocale(t)
+
 	missing := filepath.Join(t.TempDir(), "missing")
 
 	_, err := resolveWorkdir(missing)
@@ -32,6 +34,8 @@ func TestResolveWorkdirRejectsMissingDirectory(t *testing.T) {
 }
 
 func TestResolveWorkdirRejectsFile(t *testing.T) {
+	setChineseLocale(t)
+
 	path := filepath.Join(t.TempDir(), "file.txt")
 	if err := os.WriteFile(path, []byte("not a directory"), 0644); err != nil {
 		t.Fatal(err)
@@ -44,4 +48,26 @@ func TestResolveWorkdirRejectsFile(t *testing.T) {
 	if !strings.Contains(err.Error(), "工作目录不是目录") {
 		t.Fatalf("unexpected error: %v", err)
 	}
+}
+
+func TestDefaultPromptFollowsLocale(t *testing.T) {
+	t.Setenv("LC_ALL", "zh_CN.UTF-8")
+	t.Setenv("LC_MESSAGES", "")
+	t.Setenv("LANG", "")
+	if got := DefaultPrompt(); got != "codex，早上好" {
+		t.Fatalf("got %q", got)
+	}
+
+	t.Setenv("LC_ALL", "en_US.UTF-8")
+	if got := DefaultPrompt(); got != "codex, good morning" {
+		t.Fatalf("got %q", got)
+	}
+}
+
+func setChineseLocale(t *testing.T) {
+	t.Helper()
+
+	t.Setenv("LC_ALL", "zh_CN.UTF-8")
+	t.Setenv("LC_MESSAGES", "")
+	t.Setenv("LANG", "")
 }

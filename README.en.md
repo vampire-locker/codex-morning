@@ -14,10 +14,11 @@ This is useful when you want Codex to start at a deliberate time, such as before
 
 Example: if you start work at 10:00 and take a break from 12:00 to 14:00, you can activate Codex early at 09:00. The 5-hour usage window then refreshes right at 14:00, so you can continue using Codex when you return to your desk. The exact available usage and refresh time are still determined by Codex and your account plan.
 
-The default schedule is 09:00, and the default prompt is:
+The default schedule is 09:00. Terminal messages and the default Codex prompt follow the system language:
 
 ```text
-codex，早上好
+Chinese system: codex，早上好
+Other system languages: codex, good morning
 ```
 
 ## Requirements
@@ -89,7 +90,7 @@ codex-morning install --workdir /path/to/your/project
 Customize the time or prompt:
 
 ```bash
-codex-morning install --time 09:00 --prompt "codex，早上好" --workdir /path/to/your/project
+codex-morning install --time 09:00 --prompt "codex, good morning" --workdir /path/to/your/project
 ```
 
 The installer stores the working directory in the LaunchAgent. Avoid installing from broad download folders such as `~/Downloads`; Codex may ask whether to trust the current directory before loading project-local config, hooks, and rules.
@@ -110,11 +111,13 @@ codex-morning status
 codex-morning uninstall
 ```
 
-`run-once` opens a new Terminal window immediately and runs:
+`run-once` opens a new Terminal window immediately and runs Codex with the default prompt for the current system language. For example, on a Chinese system it runs:
 
 ```bash
 codex "codex，早上好"
 ```
+
+On other system languages, the default is `codex "codex, good morning"`.
 
 `uninstall` unloads and removes the LaunchAgent.
 
