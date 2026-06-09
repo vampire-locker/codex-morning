@@ -71,19 +71,34 @@ make install PREFIX="$HOME/.local"
 
 ## 设置定时启动
 
-安装每天执行的 LaunchAgent：
+请在你希望 Codex 启动的项目目录里安装每天执行的 LaunchAgent：
 
 ```bash
+cd /path/to/your/project
 codex-morning install
+```
+
+也可以显式指定工作目录：
+
+```bash
+codex-morning install --workdir /path/to/your/project
 ```
 
 自定义时间或提示词：
 
 ```bash
-codex-morning install --time 09:00 --prompt "codex，早上好"
+codex-morning install --time 09:00 --prompt "codex，早上好" --workdir /path/to/your/project
 ```
 
-安装器会把当前工作目录写入 LaunchAgent，所以请在你希望 Codex 启动的项目目录里执行安装命令。
+安装器会把工作目录写入 LaunchAgent。不要在 `~/Downloads` 这类宽泛的下载目录里直接安装；Codex 在加载项目级配置、hooks 和 rules 前，可能会先询问是否信任当前目录。
+
+新目录第一次运行时，可以先手动执行一次，并在你信任该目录时选择 `Yes`：
+
+```bash
+codex-morning run-once --workdir /path/to/your/project
+```
+
+Codex 记录该目录为可信后，同一目录的定时启动通常就不会再停在这个信任提示上。
 
 ## 常用命令
 

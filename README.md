@@ -71,19 +71,34 @@ make install PREFIX="$HOME/.local"
 
 ## Schedule Codex
 
-Install the daily LaunchAgent:
+Install the daily LaunchAgent from the project directory where you want Codex to start:
 
 ```bash
+cd /path/to/your/project
 codex-morning install
+```
+
+You can also pass the working directory explicitly:
+
+```bash
+codex-morning install --workdir /path/to/your/project
 ```
 
 Customize the time or prompt:
 
 ```bash
-codex-morning install --time 09:00 --prompt "codex，早上好"
+codex-morning install --time 09:00 --prompt "codex，早上好" --workdir /path/to/your/project
 ```
 
-The installer stores the current working directory in the LaunchAgent, so run it from the project directory where you want Codex to start.
+The installer stores the working directory in the LaunchAgent. Avoid installing from broad download folders such as `~/Downloads`; Codex may ask whether to trust the current directory before loading project-local config, hooks, and rules.
+
+For the first run in a new directory, run this once and choose `Yes` if you trust the directory:
+
+```bash
+codex-morning run-once --workdir /path/to/your/project
+```
+
+After Codex records the directory as trusted, scheduled runs should no longer stop at that trust prompt for the same directory.
 
 ## Useful Commands
 

@@ -107,7 +107,9 @@ func Install(opts InstallOptions) error {
 
 	fmt.Printf("Installed %s\n", opts.Label)
 	fmt.Printf("Schedule: every day at %02d:%02d\n", hour, minute)
+	fmt.Printf("Workdir: %s\n", workdir)
 	fmt.Printf("Plist: %s\n", path)
+	fmt.Println("If Codex asks whether to trust this directory, choose Yes once for a directory you trust.")
 	return nil
 }
 
