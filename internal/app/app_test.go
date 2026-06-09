@@ -26,7 +26,7 @@ func TestResolveWorkdirRejectsMissingDirectory(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected missing directory to fail")
 	}
-	if !strings.Contains(err.Error(), "workdir does not exist") {
+	if !strings.Contains(err.Error(), "工作目录不存在") {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
@@ -41,7 +41,7 @@ func TestResolveWorkdirRejectsFile(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected file path to fail")
 	}
-	if !strings.Contains(err.Error(), "workdir is not a directory") {
+	if !strings.Contains(err.Error(), "工作目录不是目录") {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }

@@ -9,7 +9,7 @@ import (
 
 func OpenCodex(workdir, codexBin, prompt string) error {
 	if workdir == "" {
-		return fmt.Errorf("workdir is required")
+		return fmt.Errorf("工作目录不能为空")
 	}
 	if codexBin == "" {
 		codexBin = "codex"
@@ -23,7 +23,7 @@ func OpenCodex(workdir, codexBin, prompt string) error {
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		_ = os.Remove(scriptPath)
-		return fmt.Errorf("open Terminal: %w\n%s", err, string(out))
+		return fmt.Errorf("打开 Terminal 失败：%w\n%s", err, string(out))
 	}
 	return nil
 }
@@ -31,7 +31,7 @@ func OpenCodex(workdir, codexBin, prompt string) error {
 func WriteCommandFile(workdir, codexBin, prompt string) (string, error) {
 	file, err := os.CreateTemp("", "codex-morning-*.command")
 	if err != nil {
-		return "", fmt.Errorf("create command file: %w", err)
+		return "", fmt.Errorf("创建命令文件失败：%w", err)
 	}
 	path := file.Name()
 
@@ -39,15 +39,15 @@ func WriteCommandFile(workdir, codexBin, prompt string) (string, error) {
 	if _, err := file.WriteString(content); err != nil {
 		_ = file.Close()
 		_ = os.Remove(path)
-		return "", fmt.Errorf("write command file: %w", err)
+		return "", fmt.Errorf("写入命令文件失败：%w", err)
 	}
 	if err := file.Close(); err != nil {
 		_ = os.Remove(path)
-		return "", fmt.Errorf("close command file: %w", err)
+		return "", fmt.Errorf("关闭命令文件失败：%w", err)
 	}
 	if err := os.Chmod(path, 0700); err != nil {
 		_ = os.Remove(path)
-		return "", fmt.Errorf("chmod command file: %w", err)
+		return "", fmt.Errorf("设置命令文件权限失败：%w", err)
 	}
 
 	return path, nil
