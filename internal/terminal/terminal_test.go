@@ -1,6 +1,10 @@
 package terminal
 
-import "testing"
+import (
+	"os"
+	"strings"
+	"testing"
+)
 
 func TestShellQuote(t *testing.T) {
 	got := ShellQuote("codex，早上好 'quote'")
@@ -15,5 +19,36 @@ func TestBuildShellCommand(t *testing.T) {
 	want := "cd '/Users/me/project' && '/opt/homebrew/bin/codex' 'codex，早上好'"
 	if got != want {
 		t.Fatalf("got %q, want %q", got, want)
+	}
+}
+
+func TestWriteCommandFile(t *testing.T) {
+	path, err := WriteCommandFile("/Users/me/project", "/opt/homebrew/bin/codex", "codex，早上好")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(path)
+
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if info.Mode().Perm() != 0700 {
+		t.Fatalf("got mode %v, want 0700", info.Mode().Perm())
+	}
+
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	required := []string{
+		"#!/bin/zsh",
+		`rm -f "$0"`,
+		"cd '/Users/me/project' && '/opt/homebrew/bin/codex' 'codex，早上好'",
+	}
+	for _, value := range required {
+		if !strings.Contains(string(content), value) {
+			t.Fatalf("command file missing %q:\n%s", value, content)
+		}
 	}
 }

@@ -63,6 +63,8 @@ sudo mv codex-morning /usr/local/bin/codex-morning
 
 Building from source with `make install` or installing with `go install` avoids the browser download quarantine path.
 
+If macOS asks whether `codex-morning` can control Terminal, you are likely running an older release. Download the latest release. Current versions open Terminal through a temporary `.command` file instead of requesting Terminal automation permission.
+
 ### Option 2: Build From Source
 
 Clone the repository, then run:

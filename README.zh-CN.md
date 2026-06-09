@@ -63,6 +63,8 @@ sudo mv codex-morning /usr/local/bin/codex-morning
 
 如果使用 `make install` 从源码构建，或者使用 `go install` 安装，就不会走浏览器下载 quarantine 这条路径。
 
+如果 macOS 提示 `codex-morning` 想要控制 Terminal，通常说明你运行的是旧版本。请下载最新 release。当前版本会通过临时 `.command` 文件打开 Terminal，不再请求控制 Terminal 的自动化权限。
+
 ### 方式二：从源码构建
 
 克隆仓库后运行：
