@@ -10,7 +10,9 @@ Open a new macOS Terminal window at the right time of day and start Codex with a
 
 It installs a user-level `launchd` agent. At the configured time, macOS opens a new Terminal window, changes into your chosen project directory, and runs Codex with your preset prompt.
 
-This is useful when you want Codex to start at a deliberate time, such as before you arrive at work, so your daily coding session can line up better with Codex's usage window. The exact available usage and refresh time are still determined by Codex and your account plan.
+This is useful when you want Codex to start at a deliberate time, such as before you arrive at work, so your daily coding session can line up better with Codex's usage window.
+
+Example: if you start work at 10:00 and take a break from 12:00 to 14:00, you can activate Codex early at 09:00. The 5-hour usage window then refreshes right at 14:00, so you can continue using Codex when you return to your desk. The exact available usage and refresh time are still determined by Codex and your account plan.
 
 The default schedule is 09:00, and the default prompt is:
 
