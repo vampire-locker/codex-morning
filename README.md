@@ -1,41 +1,41 @@
 # codex-morning
 
-Language: English | [简体中文](README.zh-CN.md)
+语言：简体中文 | [English](README.en.md)
 
-Open a new macOS Terminal window at the right time of day and start Codex with a preset prompt.
+在每天合适的时间自动打开一个新的 macOS Terminal 窗口，并使用预设提示词启动 Codex。
 
-## What It Does
+## 这个工具做什么
 
-`codex-morning` is a small macOS CLI tool for scheduling Codex startup around your work routine.
+`codex-morning` 是一个 macOS 命令行小工具，用来按照你的工作节奏定时启动 Codex。
 
-It installs a user-level `launchd` agent. At the configured time, macOS opens a new Terminal window, changes into your chosen project directory, and runs Codex with your preset prompt.
+它会安装一个用户级 `launchd` 定时任务。到达设定时间后，macOS 会打开一个新的 Terminal 窗口，进入你指定的项目目录，并用预设提示词运行 Codex。
 
-This is useful when you want Codex to start at a deliberate time, such as before you arrive at work, so your daily coding session can line up better with Codex's usage window. The exact available usage and refresh time are still determined by Codex and your account plan.
+这个工具适合希望在合适时间启动 Codex 的用户，例如在到公司前提前唤起 Codex，让每天的编码时段更好地对齐 Codex 的使用窗口。具体可用额度和刷新时间仍以 Codex 及你的账号套餐显示为准。
 
-The default schedule is 09:00, and the default prompt is:
+默认执行时间是 09:00，默认提示词是：
 
 ```text
 codex，早上好
 ```
 
-## Requirements
+## 环境要求
 
 - macOS
-- Codex CLI installed and signed in
-- Go 1.22+ only if building from source
+- 已安装并登录 Codex CLI
+- 只有从源码构建时才需要 Go 1.22+
 
-## Install
+## 安装
 
-### Option 1: Download a Release
+### 方式一：下载 Release
 
-This is the easiest path for most users and does not require Go.
+这是最适合普通用户的方式，不需要安装 Go。
 
-1. Open the [Releases](https://github.com/vampire-locker/codex-morning/releases) page.
-2. Download the macOS build for your Mac:
-   - Apple Silicon: `codex-morning-macos-apple-silicon`
-   - Intel Mac: `codex-morning-macos-intel`
-3. Rename the downloaded file to `codex-morning`.
-4. Remove the browser download quarantine flag, make it executable, and move it into your PATH:
+1. 打开 [Releases](https://github.com/vampire-locker/codex-morning/releases) 页面。
+2. 根据你的 Mac 下载对应文件：
+   - Apple Silicon：`codex-morning-macos-apple-silicon`
+   - Intel Mac：`codex-morning-macos-intel`
+3. 把下载的文件重命名为 `codex-morning`。
+4. 移除浏览器下载附加的 quarantine 标记，添加执行权限，并移动到 PATH 目录：
 
 ```bash
 xattr -d com.apple.quarantine codex-morning 2>/dev/null || true
@@ -43,19 +43,19 @@ chmod +x codex-morning
 sudo mv codex-morning /usr/local/bin/codex-morning
 ```
 
-Confirm the install:
+确认安装成功：
 
 ```bash
 codex-morning help
 ```
 
-The `xattr` command prevents the common macOS Gatekeeper prompt that says the downloaded binary cannot be verified. Building from source with `make install` or installing with `go install` avoids the browser download quarantine path.
+上面的 `xattr` 命令用于避免 macOS Gatekeeper 弹出“无法验证下载文件”的提示。如果使用 `make install` 从源码构建，或者使用 `go install` 安装，就不会走浏览器下载 quarantine 这条路径。
 
-If macOS asks whether `codex-morning` can control Terminal, you are likely running an older release. Download the latest version. Current versions open Terminal through a temporary `.command` file instead of requesting Terminal automation permission.
+如果 macOS 提示 `codex-morning` 想要控制 Terminal，通常说明你运行的是旧版本。请下载最新版本。当前版本会通过临时 `.command` 文件打开 Terminal，不再请求控制 Terminal 的自动化权限。
 
-### Option 2: Build From Source
+### 方式二：从源码构建
 
-Clone the repository, then run:
+克隆仓库后运行：
 
 ```bash
 git clone git@github.com:vampire-locker/codex-morning.git
@@ -63,44 +63,44 @@ cd codex-morning
 make install
 ```
 
-This installs the `codex-morning` binary to `/usr/local/bin` by default. You can override the destination:
+默认会把 `codex-morning` 安装到 `/usr/local/bin`。也可以指定安装目录：
 
 ```bash
 make install PREFIX="$HOME/.local"
 ```
 
-## Schedule Codex
+## 设置定时启动
 
-Install the daily LaunchAgent from the project directory where you want Codex to start:
+请在你希望 Codex 启动的项目目录里安装每天执行的 LaunchAgent：
 
 ```bash
 cd /path/to/your/project
 codex-morning install
 ```
 
-You can also pass the working directory explicitly:
+也可以显式指定工作目录：
 
 ```bash
 codex-morning install --workdir /path/to/your/project
 ```
 
-Customize the time or prompt:
+自定义时间或提示词：
 
 ```bash
 codex-morning install --time 09:00 --prompt "codex，早上好" --workdir /path/to/your/project
 ```
 
-The installer stores the working directory in the LaunchAgent. Avoid installing from broad download folders such as `~/Downloads`; Codex may ask whether to trust the current directory before loading project-local config, hooks, and rules.
+安装器会把工作目录写入 LaunchAgent。不要在 `~/Downloads` 这类宽泛的下载目录里直接安装；Codex 在加载项目级配置、hooks 和 rules 前，可能会先询问是否信任当前目录。
 
-For the first run in a new directory, run this once and choose `Yes` if you trust the directory:
+新目录第一次运行时，可以先手动执行一次，并在你信任该目录时选择 `Yes`：
 
 ```bash
 codex-morning run-once --workdir /path/to/your/project
 ```
 
-After Codex records the directory as trusted, scheduled runs should no longer stop at that trust prompt for the same directory.
+Codex 记录该目录为可信后，同一目录的定时启动通常就不会再停在这个信任提示上。
 
-## Useful Commands
+## 常用命令
 
 ```bash
 codex-morning run-once
@@ -108,70 +108,70 @@ codex-morning status
 codex-morning uninstall
 ```
 
-`run-once` opens a new Terminal window immediately and runs:
+`run-once` 会立即打开一个新的 Terminal 窗口并运行：
 
 ```bash
 codex "codex，早上好"
 ```
 
-`uninstall` unloads and removes the LaunchAgent.
+`uninstall` 会卸载并删除 LaunchAgent。
 
-## Dry Run
+## 预览配置
 
-Print the plist without installing it:
+只打印 plist，不实际安装：
 
 ```bash
 codex-morning install --dry-run
 ```
 
-## Test
+## 测试
 
 ```bash
 make test
 ```
 
-## Build
+## 构建
 
 ```bash
 make build
 ```
 
-The binary is written to `bin/codex-morning`.
+生成的二进制文件位于 `bin/codex-morning`。
 
 ## Go Install
 
-If you already have Go installed, you can install directly from GitHub:
+如果你已经安装了 Go，也可以直接从 GitHub 安装：
 
 ```bash
 go install github.com/vampire-locker/codex-morning/cmd/codex-morning@latest
 ```
 
-Make sure your Go bin directory is in `PATH`:
+确保 Go 的 bin 目录在 `PATH` 中：
 
 ```bash
 export PATH="$PATH:$(go env GOPATH)/bin"
 ```
 
-## Publishing Notes
+## 发布说明
 
-For a beginner-friendly release, publish prebuilt binaries for:
+为了让普通用户更容易安装，建议发布预编译二进制：
 
-- `codex-morning-macos-apple-silicon` for Apple Silicon Macs
-- `codex-morning-macos-intel` for Intel Macs
+- `codex-morning-macos-apple-silicon`：Apple Silicon Mac
+- `codex-morning-macos-intel`：Intel Mac
 
-This repository includes a release workflow. To publish a new release:
+仓库里已经包含 release workflow。发布新版本时运行：
 
 ```bash
 git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-Replace `vX.Y.Z` with the next semantic version, such as `v0.1.4`.
+把 `vX.Y.Z` 替换为下一个语义化版本号，例如 `v0.1.4`。
 
-GitHub Actions will run tests, build both macOS binaries, create a GitHub Release, and upload the files.
+GitHub Actions 会自动运行测试，构建两个 macOS 二进制文件，创建 GitHub Release，并上传文件。
 
-Homebrew can be added later after a tap is published. Avoid documenting a Homebrew command before it works.
+Homebrew 可以等 tap 真正发布后再补。不要在 README 里提前写还不能运行的 Homebrew 命令。
 
-## License
+## 许可证
 
 MIT
