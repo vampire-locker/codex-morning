@@ -32,8 +32,8 @@ codex，早上好
 
 1. 打开 [Releases](https://github.com/vampire-locker/codex-morning/releases) 页面。
 2. 根据你的 Mac 下载对应文件：
-   - Apple Silicon：`codex-morning-darwin-arm64`
-   - Intel Mac：`codex-morning-darwin-amd64`
+   - Apple Silicon：`codex-morning-macos-apple-silicon`
+   - Intel Mac：`codex-morning-macos-intel`
 3. 把下载的文件重命名为 `codex-morning`。
 4. 添加执行权限，并移动到 PATH 目录：
 
@@ -136,8 +136,8 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 
 为了让普通用户更容易安装，建议发布预编译二进制：
 
-- `darwin/arm64`：Apple Silicon Mac
-- `darwin/amd64`：Intel Mac
+- `codex-morning-macos-apple-silicon`：Apple Silicon Mac
+- `codex-morning-macos-intel`：Intel Mac
 
 仓库里已经包含 release workflow。发布新版本时运行：
 

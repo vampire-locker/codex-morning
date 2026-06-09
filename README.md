@@ -32,8 +32,8 @@ This is the easiest path for most users and does not require Go.
 
 1. Open the [Releases](https://github.com/vampire-locker/codex-morning/releases) page.
 2. Download the macOS build for your Mac:
-   - Apple Silicon: `codex-morning-darwin-arm64`
-   - Intel Mac: `codex-morning-darwin-amd64`
+   - Apple Silicon: `codex-morning-macos-apple-silicon`
+   - Intel Mac: `codex-morning-macos-intel`
 3. Rename the downloaded file to `codex-morning`.
 4. Make it executable and move it into your PATH:
 
@@ -136,8 +136,8 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 
 For a beginner-friendly release, publish prebuilt binaries for:
 
-- `darwin/arm64` for Apple Silicon Macs
-- `darwin/amd64` for Intel Macs
+- `codex-morning-macos-apple-silicon` for Apple Silicon Macs
+- `codex-morning-macos-intel` for Intel Macs
 
 This repository includes a release workflow. To publish a new release:
 

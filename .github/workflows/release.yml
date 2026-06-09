@@ -24,9 +24,10 @@ jobs:
       - name: Build macOS binaries
         run: |
           mkdir -p dist
-          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o dist/codex-morning-darwin-arm64 ./cmd/codex-morning
-          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o dist/codex-morning-darwin-amd64 ./cmd/codex-morning
-          sha256sum dist/* > dist/checksums.txt
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o dist/codex-morning-macos-apple-silicon ./cmd/codex-morning
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o dist/codex-morning-macos-intel ./cmd/codex-morning
+          cd dist
+          sha256sum codex-morning-macos-* > checksums.txt
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
