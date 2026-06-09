@@ -49,21 +49,9 @@ sudo mv codex-morning /usr/local/bin/codex-morning
 codex-morning help
 ```
 
-### macOS 安全提示
+上面的 `xattr` 命令用于避免 macOS Gatekeeper 弹出“无法验证下载文件”的提示。如果使用 `make install` 从源码构建，或者使用 `go install` 安装，就不会走浏览器下载 quarantine 这条路径。
 
-如果 macOS 提示无法验证 `codex-morning`，这是因为该二进制文件是从浏览器下载的，而且没有使用 Apple Developer ID 做 notarization，所以被 Gatekeeper 拦截。
-
-对于这个开源命令行工具，可以在移动到 PATH 目录前移除 quarantine 标记：
-
-```bash
-xattr -d com.apple.quarantine codex-morning 2>/dev/null || true
-chmod +x codex-morning
-sudo mv codex-morning /usr/local/bin/codex-morning
-```
-
-如果使用 `make install` 从源码构建，或者使用 `go install` 安装，就不会走浏览器下载 quarantine 这条路径。
-
-如果 macOS 提示 `codex-morning` 想要控制 Terminal，通常说明你运行的是旧版本。请下载最新 release。当前版本会通过临时 `.command` 文件打开 Terminal，不再请求控制 Terminal 的自动化权限。
+如果 macOS 提示 `codex-morning` 想要控制 Terminal，通常说明你运行的是旧版本。请下载最新版本。当前版本会通过临时 `.command` 文件打开 Terminal，不再请求控制 Terminal 的自动化权限。
 
 ### 方式二：从源码构建
 

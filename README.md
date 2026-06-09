@@ -49,21 +49,9 @@ Confirm the install:
 codex-morning help
 ```
 
-### macOS Security Prompt
+The `xattr` command prevents the common macOS Gatekeeper prompt that says the downloaded binary cannot be verified. Building from source with `make install` or installing with `go install` avoids the browser download quarantine path.
 
-If macOS says it cannot verify `codex-morning`, the binary was blocked by Gatekeeper because it was downloaded from the internet and is not notarized with an Apple Developer ID.
-
-For this open-source CLI release, remove the quarantine flag before moving it into your PATH:
-
-```bash
-xattr -d com.apple.quarantine codex-morning 2>/dev/null || true
-chmod +x codex-morning
-sudo mv codex-morning /usr/local/bin/codex-morning
-```
-
-Building from source with `make install` or installing with `go install` avoids the browser download quarantine path.
-
-If macOS asks whether `codex-morning` can control Terminal, you are likely running an older release. Download the latest release. Current versions open Terminal through a temporary `.command` file instead of requesting Terminal automation permission.
+If macOS asks whether `codex-morning` can control Terminal, you are likely running an older release. Download the latest version. Current versions open Terminal through a temporary `.command` file instead of requesting Terminal automation permission.
 
 ### Option 2: Build From Source
 
