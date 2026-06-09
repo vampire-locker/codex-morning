@@ -35,9 +35,10 @@ This is the easiest path for most users and does not require Go.
    - Apple Silicon: `codex-morning-macos-apple-silicon`
    - Intel Mac: `codex-morning-macos-intel`
 3. Rename the downloaded file to `codex-morning`.
-4. Make it executable and move it into your PATH:
+4. Remove the browser download quarantine flag, make it executable, and move it into your PATH:
 
 ```bash
+xattr -d com.apple.quarantine codex-morning 2>/dev/null || true
 chmod +x codex-morning
 sudo mv codex-morning /usr/local/bin/codex-morning
 ```
@@ -47,6 +48,20 @@ Confirm the install:
 ```bash
 codex-morning help
 ```
+
+### macOS Security Prompt
+
+If macOS says it cannot verify `codex-morning`, the binary was blocked by Gatekeeper because it was downloaded from the internet and is not notarized with an Apple Developer ID.
+
+For this open-source CLI release, remove the quarantine flag before moving it into your PATH:
+
+```bash
+xattr -d com.apple.quarantine codex-morning 2>/dev/null || true
+chmod +x codex-morning
+sudo mv codex-morning /usr/local/bin/codex-morning
+```
+
+Building from source with `make install` or installing with `go install` avoids the browser download quarantine path.
 
 ### Option 2: Build From Source
 
