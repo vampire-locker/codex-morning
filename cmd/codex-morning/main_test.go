@@ -20,6 +20,8 @@ func TestRunPrintsChineseUsage(t *testing.T) {
 		"codex-morning 用于在 macOS 上定时启动 Codex。",
 		"用法：",
 		"--weekdays-only",
+		"logs",
+		"doctor",
 		"命令：",
 		"创建并加载用户级 LaunchAgent。",
 	}

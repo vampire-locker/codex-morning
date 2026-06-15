@@ -52,10 +52,29 @@ func run(args []string) error {
 	case "status":
 		fs := flag.NewFlagSet("status", flag.ExitOnError)
 		label := fs.String("label", app.DefaultLabel, i18n.Text("launchd 任务标签", "launchd label"))
+		verbose := fs.Bool("verbose", false, i18n.Text("显示已安装配置详情", "show installed configuration details"))
 		if err := fs.Parse(args[1:]); err != nil {
 			return err
 		}
-		return app.Status(*label)
+		return app.Status(*label, *verbose)
+
+	case "logs":
+		fs := flag.NewFlagSet("logs", flag.ExitOnError)
+		opts := app.LogsOptions{}
+		fs.StringVar(&opts.Label, "label", app.DefaultLabel, i18n.Text("launchd 任务标签", "launchd label"))
+		fs.BoolVar(&opts.Follow, "follow", false, i18n.Text("持续跟踪日志输出", "follow log output"))
+		if err := fs.Parse(args[1:]); err != nil {
+			return err
+		}
+		return app.Logs(opts)
+
+	case "doctor":
+		fs := flag.NewFlagSet("doctor", flag.ExitOnError)
+		label := fs.String("label", app.DefaultLabel, i18n.Text("launchd 任务标签", "launchd label"))
+		if err := fs.Parse(args[1:]); err != nil {
+			return err
+		}
+		return app.Doctor(*label)
 
 	case "uninstall":
 		fs := flag.NewFlagSet("uninstall", flag.ExitOnError)

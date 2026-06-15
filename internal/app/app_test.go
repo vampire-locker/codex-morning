@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/vampire-locker/codex-morning/internal/launchd"
 )
 
 func TestResolveWorkdirReturnsAbsoluteDirectory(t *testing.T) {
@@ -60,6 +62,39 @@ func TestDefaultPromptFollowsLocale(t *testing.T) {
 
 	t.Setenv("LC_ALL", "en_US.UTF-8")
 	if got := DefaultPrompt(); got != "codex, good morning" {
+		t.Fatalf("got %q", got)
+	}
+}
+
+func TestArgValue(t *testing.T) {
+	args := []string{"codex-morning", "run-once", "--workdir", "/tmp/project", "--prompt", "hello"}
+	if got := argValue(args, "--workdir"); got != "/tmp/project" {
+		t.Fatalf("got %q", got)
+	}
+	if got := argValue(args, "--missing"); got != "" {
+		t.Fatalf("got %q, want empty", got)
+	}
+}
+
+func TestScheduleText(t *testing.T) {
+	t.Setenv("LC_ALL", "zh_CN.UTF-8")
+	t.Setenv("LC_MESSAGES", "")
+	t.Setenv("LANG", "")
+
+	got := scheduleText(launchd.Agent{Hour: 9, Minute: 5, WeekdaysOnly: true})
+	if got != "周一到周五 09:05" {
+		t.Fatalf("got %q", got)
+	}
+}
+
+func TestLastLines(t *testing.T) {
+	got := lastLines("one\ntwo\nthree\n", 2)
+	if got != "two\nthree\n" {
+		t.Fatalf("got %q", got)
+	}
+
+	got = lastLines("one\ntwo\nthree", 2)
+	if got != "two\nthree" {
 		t.Fatalf("got %q", got)
 	}
 }

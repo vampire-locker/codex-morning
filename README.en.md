@@ -114,6 +114,9 @@ After Codex records the directory as trusted, scheduled runs should no longer st
 ```bash
 codex-morning run-once
 codex-morning status
+codex-morning status --verbose
+codex-morning logs
+codex-morning doctor
 codex-morning uninstall
 ```
 
@@ -126,6 +129,16 @@ codex "codex，早上好"
 On other system languages, the default is `codex "codex, good morning"`.
 
 `uninstall` unloads and removes the LaunchAgent.
+
+`status --verbose` shows the installed schedule, working directory, Codex binary, prompt, and log paths.
+
+`logs` prints recent LaunchAgent stdout and stderr logs. To keep following log output:
+
+```bash
+codex-morning logs --follow
+```
+
+`doctor` checks the macOS environment, LaunchAgent plist, launchd load state, working directory, Codex binary, and Terminal app. Use it when the scheduled job does not start as expected.
 
 ## Dry Run
 

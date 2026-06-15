@@ -1,8 +1,10 @@
 package launchd
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -71,6 +73,217 @@ func Render(agent Agent) string {
 </dict>
 </plist>
 `
+}
+
+func Parse(data []byte) (Agent, error) {
+	value, err := parsePlist(data)
+	if err != nil {
+		return Agent{}, err
+	}
+	root, ok := value.(map[string]any)
+	if !ok {
+		return Agent{}, fmt.Errorf(i18n.Text("plist 根节点不是 dict", "plist root is not a dict"))
+	}
+
+	agent := Agent{
+		Label:            stringValue(root["Label"]),
+		ProgramArguments: stringSlice(root["ProgramArguments"]),
+		Stdout:           stringValue(root["StandardOutPath"]),
+		Stderr:           stringValue(root["StandardErrorPath"]),
+	}
+	readSchedule(root["StartCalendarInterval"], &agent)
+	return agent, nil
+}
+
+func parsePlist(data []byte) (any, error) {
+	decoder := xml.NewDecoder(bytes.NewReader(data))
+	for {
+		token, err := decoder.Token()
+		if err != nil {
+			if err == io.EOF {
+				return nil, fmt.Errorf(i18n.Text("plist 内容为空", "plist is empty"))
+			}
+			return nil, err
+		}
+		start, ok := token.(xml.StartElement)
+		if ok && start.Name.Local == "plist" {
+			return parsePlistValue(decoder)
+		}
+	}
+}
+
+func parsePlistValue(decoder *xml.Decoder) (any, error) {
+	for {
+		token, err := decoder.Token()
+		if err != nil {
+			return nil, err
+		}
+		start, ok := token.(xml.StartElement)
+		if !ok {
+			continue
+		}
+
+		switch start.Name.Local {
+		case "dict":
+			return parseDict(decoder)
+		case "array":
+			return parsePlistArray(decoder)
+		case "string":
+			return readElementText(decoder)
+		case "integer":
+			text, err := readElementText(decoder)
+			if err != nil {
+				return nil, err
+			}
+			return strconv.Atoi(strings.TrimSpace(text))
+		default:
+			return nil, fmt.Errorf(i18n.Text("不支持的 plist 元素：%s", "unsupported plist element: %s"), start.Name.Local)
+		}
+	}
+}
+
+func parseDict(decoder *xml.Decoder) (map[string]any, error) {
+	values := map[string]any{}
+	var key string
+	for {
+		token, err := decoder.Token()
+		if err != nil {
+			return nil, err
+		}
+		switch value := token.(type) {
+		case xml.StartElement:
+			if value.Name.Local == "key" {
+				key, err = readElementText(decoder)
+				if err != nil {
+					return nil, err
+				}
+				continue
+			}
+			if key == "" {
+				return nil, fmt.Errorf(i18n.Text("plist dict 缺少 key", "plist dict value missing key"))
+			}
+			parsed, err := parseStartedValue(decoder, value)
+			if err != nil {
+				return nil, err
+			}
+			values[key] = parsed
+			key = ""
+		case xml.EndElement:
+			if value.Name.Local == "dict" {
+				return values, nil
+			}
+		}
+	}
+}
+
+func parsePlistArray(decoder *xml.Decoder) ([]any, error) {
+	var values []any
+	for {
+		token, err := decoder.Token()
+		if err != nil {
+			return nil, err
+		}
+		switch value := token.(type) {
+		case xml.StartElement:
+			parsed, err := parseStartedValue(decoder, value)
+			if err != nil {
+				return nil, err
+			}
+			values = append(values, parsed)
+		case xml.EndElement:
+			if value.Name.Local == "array" {
+				return values, nil
+			}
+		}
+	}
+}
+
+func parseStartedValue(decoder *xml.Decoder, start xml.StartElement) (any, error) {
+	switch start.Name.Local {
+	case "dict":
+		return parseDict(decoder)
+	case "array":
+		return parsePlistArray(decoder)
+	case "string":
+		return readElementText(decoder)
+	case "integer":
+		text, err := readElementText(decoder)
+		if err != nil {
+			return nil, err
+		}
+		return strconv.Atoi(strings.TrimSpace(text))
+	default:
+		return nil, fmt.Errorf(i18n.Text("不支持的 plist 元素：%s", "unsupported plist element: %s"), start.Name.Local)
+	}
+}
+
+func readElementText(decoder *xml.Decoder) (string, error) {
+	var builder strings.Builder
+	for {
+		token, err := decoder.Token()
+		if err != nil {
+			return "", err
+		}
+		switch value := token.(type) {
+		case xml.CharData:
+			builder.Write([]byte(value))
+		case xml.EndElement:
+			return builder.String(), nil
+		}
+	}
+}
+
+func readSchedule(value any, agent *Agent) {
+	if dict, ok := value.(map[string]any); ok {
+		agent.Hour = intValue(dict["Hour"])
+		agent.Minute = intValue(dict["Minute"])
+		return
+	}
+
+	items, ok := value.([]any)
+	if !ok || len(items) == 0 {
+		return
+	}
+	weekdays := map[int]bool{}
+	for index, item := range items {
+		dict, ok := item.(map[string]any)
+		if !ok {
+			continue
+		}
+		if index == 0 {
+			agent.Hour = intValue(dict["Hour"])
+			agent.Minute = intValue(dict["Minute"])
+		}
+		weekday := intValue(dict["Weekday"])
+		if weekday != 0 {
+			weekdays[weekday] = true
+		}
+	}
+	agent.WeekdaysOnly = len(weekdays) == 5 && weekdays[1] && weekdays[2] && weekdays[3] && weekdays[4] && weekdays[5]
+}
+
+func stringValue(value any) string {
+	text, _ := value.(string)
+	return text
+}
+
+func intValue(value any) int {
+	number, _ := value.(int)
+	return number
+}
+
+func stringSlice(value any) []string {
+	items, ok := value.([]any)
+	if !ok {
+		return nil
+	}
+	values := make([]string, 0, len(items))
+	for _, item := range items {
+		if text, ok := item.(string); ok {
+			values = append(values, text)
+		}
+	}
+	return values
 }
 
 func renderCalendarInterval(agent Agent) string {

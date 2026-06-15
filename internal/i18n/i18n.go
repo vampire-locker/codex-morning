@@ -47,25 +47,33 @@ func Usage(defaultPrompt string) string {
 用法：
   codex-morning install [--time 09:00] [--weekdays-only] [--prompt "`+defaultPrompt+`"]
   codex-morning run-once [--prompt "`+defaultPrompt+`"]
-  codex-morning status
+  codex-morning status [--verbose]
+  codex-morning logs [--follow]
+  codex-morning doctor
   codex-morning uninstall
 
 命令：
   install    创建并加载用户级 LaunchAgent。
   run-once   立即打开新的 Terminal 窗口，并用提示词运行 Codex。
   status     查看 LaunchAgent 状态。
+  logs       查看 LaunchAgent 日志。
+  doctor     检查安装和运行环境。
   uninstall  卸载并删除 LaunchAgent。`, `codex-morning schedules Codex startup on macOS.
 
 Usage:
   codex-morning install [--time 09:00] [--weekdays-only] [--prompt "`+defaultPrompt+`"]
   codex-morning run-once [--prompt "`+defaultPrompt+`"]
-  codex-morning status
+  codex-morning status [--verbose]
+  codex-morning logs [--follow]
+  codex-morning doctor
   codex-morning uninstall
 
 Commands:
   install    Create and load a user LaunchAgent.
   run-once   Open a new Terminal window and run Codex with the prompt.
   status     Show LaunchAgent status.
+  logs       Show LaunchAgent logs.
+  doctor     Check the installation and runtime environment.
   uninstall  Unload and remove the LaunchAgent.`)
 }
 

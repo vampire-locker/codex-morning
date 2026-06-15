@@ -114,6 +114,9 @@ Codex 记录该目录为可信后，同一目录的定时启动通常就不会�
 ```bash
 codex-morning run-once
 codex-morning status
+codex-morning status --verbose
+codex-morning logs
+codex-morning doctor
 codex-morning uninstall
 ```
 
@@ -126,6 +129,16 @@ codex "codex，早上好"
 其他语言系统默认会运行 `codex "codex, good morning"`。
 
 `uninstall` 会卸载并删除 LaunchAgent。
+
+`status --verbose` 会显示已安装的执行计划、工作目录、Codex 路径、提示词和日志路径。
+
+`logs` 会打印 LaunchAgent 最近的标准输出和标准错误日志。需要持续跟踪日志时使用：
+
+```bash
+codex-morning logs --follow
+```
+
+`doctor` 会检查 macOS 环境、LaunchAgent plist、launchd 加载状态、工作目录、Codex 可执行文件和 Terminal 应用，适合排查定时任务没有启动的问题。
 
 ## 预览配置
 

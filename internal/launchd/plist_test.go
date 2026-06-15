@@ -71,3 +71,32 @@ func TestRenderWeekdaysOnlyCalendarInterval(t *testing.T) {
 		t.Fatalf("plist includes weekend weekday:\n%s", plist)
 	}
 }
+
+func TestParseRenderedAgent(t *testing.T) {
+	want := Agent{
+		Label:            "com.example.codex",
+		ProgramArguments: []string{"/tmp/codex-morning", "run-once", "--workdir", "/Users/me/project", "--prompt", "codex，早上好", "--codex-bin", "/opt/homebrew/bin/codex"},
+		Hour:             9,
+		Minute:           30,
+		WeekdaysOnly:     true,
+		Stdout:           "/tmp/out.log",
+		Stderr:           "/tmp/err.log",
+	}
+
+	got, err := Parse([]byte(Render(want)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Label != want.Label {
+		t.Fatalf("got label %q, want %q", got.Label, want.Label)
+	}
+	if strings.Join(got.ProgramArguments, "\x00") != strings.Join(want.ProgramArguments, "\x00") {
+		t.Fatalf("got args %#v, want %#v", got.ProgramArguments, want.ProgramArguments)
+	}
+	if got.Hour != want.Hour || got.Minute != want.Minute || !got.WeekdaysOnly {
+		t.Fatalf("got schedule %+v, want weekdays %02d:%02d", got, want.Hour, want.Minute)
+	}
+	if got.Stdout != want.Stdout || got.Stderr != want.Stderr {
+		t.Fatalf("got logs %q %q, want %q %q", got.Stdout, got.Stderr, want.Stdout, want.Stderr)
+	}
+}
