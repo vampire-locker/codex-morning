@@ -16,6 +16,7 @@ type Agent struct {
 	ProgramArguments []string
 	Hour             int
 	Minute           int
+	WeekdaysOnly     bool
 	Stdout           string
 	Stderr           string
 }
@@ -61,12 +62,7 @@ func Render(agent Agent) string {
 ` + renderArray(agent.ProgramArguments) + `  </array>
 
   <key>StartCalendarInterval</key>
-  <dict>
-    <key>Hour</key>
-    <integer>` + strconv.Itoa(agent.Hour) + `</integer>
-    <key>Minute</key>
-    <integer>` + strconv.Itoa(agent.Minute) + `</integer>
-  </dict>
+` + renderCalendarInterval(agent) + `
 
   <key>StandardOutPath</key>
   <string>` + xmlEscape(agent.Stdout) + `</string>
@@ -75,6 +71,38 @@ func Render(agent Agent) string {
 </dict>
 </plist>
 `
+}
+
+func renderCalendarInterval(agent Agent) string {
+	if !agent.WeekdaysOnly {
+		return `  <dict>
+    <key>Hour</key>
+    <integer>` + strconv.Itoa(agent.Hour) + `</integer>
+    <key>Minute</key>
+    <integer>` + strconv.Itoa(agent.Minute) + `</integer>
+  </dict>`
+	}
+
+	var builder strings.Builder
+	builder.WriteString("  <array>\n")
+	for weekday := 1; weekday <= 5; weekday++ {
+		builder.WriteString("    <dict>\n")
+		builder.WriteString("      <key>Weekday</key>\n")
+		builder.WriteString("      <integer>")
+		builder.WriteString(strconv.Itoa(weekday))
+		builder.WriteString("</integer>\n")
+		builder.WriteString("      <key>Hour</key>\n")
+		builder.WriteString("      <integer>")
+		builder.WriteString(strconv.Itoa(agent.Hour))
+		builder.WriteString("</integer>\n")
+		builder.WriteString("      <key>Minute</key>\n")
+		builder.WriteString("      <integer>")
+		builder.WriteString(strconv.Itoa(agent.Minute))
+		builder.WriteString("</integer>\n")
+		builder.WriteString("    </dict>\n")
+	}
+	builder.WriteString("  </array>")
+	return builder.String()
 }
 
 func renderArray(values []string) string {

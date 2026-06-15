@@ -31,6 +31,7 @@ func run(args []string) error {
 		fs.StringVar(&opts.Workdir, "workdir", "", i18n.Text("Codex 启动时进入的工作目录", "working directory for Codex"))
 		fs.StringVar(&opts.CodexBin, "codex-bin", "", i18n.Text("Codex 可执行文件路径", "path to Codex binary"))
 		fs.StringVar(&opts.Label, "label", app.DefaultLabel, i18n.Text("launchd 任务标签", "launchd label"))
+		fs.BoolVar(&opts.WeekdaysOnly, "weekdays-only", false, i18n.Text("只在周一到周五执行", "run Monday through Friday only"))
 		fs.BoolVar(&opts.DryRun, "dry-run", false, i18n.Text("只打印 plist，不安装", "print plist without installing"))
 		if err := fs.Parse(args[1:]); err != nil {
 			return err

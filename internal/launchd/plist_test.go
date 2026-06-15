@@ -46,3 +46,28 @@ func TestRenderEscapesXML(t *testing.T) {
 		}
 	}
 }
+
+func TestRenderWeekdaysOnlyCalendarInterval(t *testing.T) {
+	plist := Render(Agent{
+		Label:            "com.example.codex",
+		ProgramArguments: []string{"/tmp/codex-morning", "run-once"},
+		Hour:             9,
+		Minute:           30,
+		WeekdaysOnly:     true,
+		Stdout:           "/tmp/out.log",
+		Stderr:           "/tmp/err.log",
+	})
+
+	if !strings.Contains(plist, "<key>StartCalendarInterval</key>\n  <array>") {
+		t.Fatalf("plist missing calendar interval array:\n%s", plist)
+	}
+	for weekday := 1; weekday <= 5; weekday++ {
+		needle := "<key>Weekday</key>\n      <integer>" + string(rune('0'+weekday)) + "</integer>"
+		if !strings.Contains(plist, needle) {
+			t.Fatalf("plist missing weekday %d:\n%s", weekday, plist)
+		}
+	}
+	if strings.Contains(plist, "<integer>0</integer>") || strings.Contains(plist, "<integer>6</integer>") || strings.Contains(plist, "<integer>7</integer>") {
+		t.Fatalf("plist includes weekend weekday:\n%s", plist)
+	}
+}

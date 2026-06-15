@@ -93,6 +93,12 @@ Customize the time or prompt:
 codex-morning install --time 09:00 --prompt "codex, good morning" --workdir /path/to/your/project
 ```
 
+Run Monday through Friday only, skipping weekends:
+
+```bash
+codex-morning install --weekdays-only
+```
+
 The installer stores the working directory in the LaunchAgent. Avoid installing from broad download folders such as `~/Downloads`; Codex may ask whether to trust the current directory before loading project-local config, hooks, and rules.
 
 For the first run in a new directory, run this once and choose `Yes` if you trust the directory:

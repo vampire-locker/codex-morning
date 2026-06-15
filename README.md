@@ -93,6 +93,12 @@ codex-morning install --workdir /path/to/your/project
 codex-morning install --time 09:00 --prompt "codex，早上好" --workdir /path/to/your/project
 ```
 
+只在周一到周五启动，周末不启动：
+
+```bash
+codex-morning install --weekdays-only
+```
+
 安装器会把工作目录写入 LaunchAgent。不要在 `~/Downloads` 这类宽泛的下载目录里直接安装；Codex 在加载项目级配置、hooks 和 rules 前，可能会先询问是否信任当前目录。
 
 新目录第一次运行时，可以先手动执行一次，并在你信任该目录时选择 `Yes`：

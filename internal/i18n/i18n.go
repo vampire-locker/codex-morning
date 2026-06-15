@@ -45,7 +45,7 @@ func Usage(defaultPrompt string) string {
 	return Text(`codex-morning 用于在 macOS 上定时启动 Codex。
 
 用法：
-  codex-morning install [--time 09:00] [--prompt "`+defaultPrompt+`"]
+  codex-morning install [--time 09:00] [--weekdays-only] [--prompt "`+defaultPrompt+`"]
   codex-morning run-once [--prompt "`+defaultPrompt+`"]
   codex-morning status
   codex-morning uninstall
@@ -57,7 +57,7 @@ func Usage(defaultPrompt string) string {
   uninstall  卸载并删除 LaunchAgent。`, `codex-morning schedules Codex startup on macOS.
 
 Usage:
-  codex-morning install [--time 09:00] [--prompt "`+defaultPrompt+`"]
+  codex-morning install [--time 09:00] [--weekdays-only] [--prompt "`+defaultPrompt+`"]
   codex-morning run-once [--prompt "`+defaultPrompt+`"]
   codex-morning status
   codex-morning uninstall

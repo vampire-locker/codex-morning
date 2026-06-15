@@ -22,12 +22,13 @@ func DefaultPrompt() string {
 }
 
 type InstallOptions struct {
-	Time     string
-	Prompt   string
-	Workdir  string
-	CodexBin string
-	Label    string
-	DryRun   bool
+	Time         string
+	Prompt       string
+	Workdir      string
+	CodexBin     string
+	Label        string
+	WeekdaysOnly bool
+	DryRun       bool
 }
 
 type RunOptions struct {
@@ -75,10 +76,11 @@ func Install(opts InstallOptions) error {
 			"--prompt", opts.Prompt,
 			"--codex-bin", codexBin,
 		},
-		Hour:   hour,
-		Minute: minute,
-		Stdout: filepath.Join(os.Getenv("HOME"), "Library", "Logs", opts.Label+".out.log"),
-		Stderr: filepath.Join(os.Getenv("HOME"), "Library", "Logs", opts.Label+".err.log"),
+		Hour:         hour,
+		Minute:       minute,
+		WeekdaysOnly: opts.WeekdaysOnly,
+		Stdout:       filepath.Join(os.Getenv("HOME"), "Library", "Logs", opts.Label+".out.log"),
+		Stderr:       filepath.Join(os.Getenv("HOME"), "Library", "Logs", opts.Label+".err.log"),
 	}
 
 	plist := launchd.Render(agent)
@@ -110,7 +112,11 @@ func Install(opts InstallOptions) error {
 	}
 
 	fmt.Printf(i18n.Text("已安装：%s\n", "Installed %s\n"), opts.Label)
-	fmt.Printf(i18n.Text("执行时间：每天 %02d:%02d\n", "Schedule: every day at %02d:%02d\n"), hour, minute)
+	if opts.WeekdaysOnly {
+		fmt.Printf(i18n.Text("执行时间：周一到周五 %02d:%02d\n", "Schedule: Monday through Friday at %02d:%02d\n"), hour, minute)
+	} else {
+		fmt.Printf(i18n.Text("执行时间：每天 %02d:%02d\n", "Schedule: every day at %02d:%02d\n"), hour, minute)
+	}
 	fmt.Printf(i18n.Text("工作目录：%s\n", "Workdir: %s\n"), workdir)
 	fmt.Printf(i18n.Text("plist 文件：%s\n", "Plist: %s\n"), path)
 	fmt.Println(i18n.Text("如果 Codex 询问是否信任此目录，请仅对你信任的目录选择 Yes。", "If Codex asks whether to trust this directory, choose Yes once for a directory you trust."))
