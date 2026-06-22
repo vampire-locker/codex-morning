@@ -99,15 +99,9 @@ Run Monday through Friday only, skipping weekends:
 codex-morning install --weekdays-only
 ```
 
-The installer stores the working directory in the LaunchAgent. Avoid installing from broad download folders such as `~/Downloads`; Codex may ask whether to trust the current directory before loading project-local config, hooks, and rules.
+The installer stores the working directory in the LaunchAgent. Avoid installing from broad download folders such as `~/Downloads`.
 
-For the first run in a new directory, run this once and choose `Yes` if you trust the directory:
-
-```bash
-codex-morning run-once --workdir /path/to/your/project
-```
-
-After Codex records the directory as trusted, scheduled runs should no longer stop at that trust prompt for the same directory.
+To support unattended startup, `codex-morning` passes the workdir to Codex as a trusted project through a one-off configuration override. This prevents scheduled runs from stopping at the directory trust prompt. Install jobs only for project directories you trust, because a trusted project lets Codex load project-local `.codex/config.toml`, hooks, and rules.
 
 ## Useful Commands
 
@@ -120,10 +114,10 @@ codex-morning doctor
 codex-morning uninstall
 ```
 
-`run-once` opens a new Terminal window immediately and runs Codex with the default prompt for the current system language. For example, on a Chinese system it runs:
+`run-once` opens a new Terminal window immediately and runs Codex with the default prompt for the current system language, while passing the workdir as a trusted project. For example, on a Chinese system it runs something like:
 
 ```bash
-codex "codex，早上好"
+codex -c 'projects."/path/to/your/project".trust_level="trusted"' "codex，早上好"
 ```
 
 On other system languages, the default is `codex "codex, good morning"`.

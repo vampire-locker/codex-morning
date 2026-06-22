@@ -125,7 +125,7 @@ func Install(opts InstallOptions) error {
 	}
 	fmt.Printf(i18n.Text("工作目录：%s\n", "Workdir: %s\n"), workdir)
 	fmt.Printf(i18n.Text("plist 文件：%s\n", "Plist: %s\n"), path)
-	fmt.Println(i18n.Text("如果 Codex 询问是否信任此目录，请仅对你信任的目录选择 Yes。", "If Codex asks whether to trust this directory, choose Yes once for a directory you trust."))
+	fmt.Println(i18n.Text("定时启动会把当前工作目录作为 Codex trusted project 传入，请只为你信任的目录安装任务。", "Scheduled launches pass the workdir to Codex as a trusted project. Install jobs only for directories you trust."))
 	return nil
 }
 

@@ -56,9 +56,16 @@ func WriteCommandFile(workdir, codexBin, prompt string) (string, error) {
 }
 
 func BuildShellCommand(workdir, codexBin, prompt string) string {
-	return "cd " + ShellQuote(workdir) + " && " + ShellQuote(codexBin) + " " + ShellQuote(prompt)
+	trustOverride := `projects.` + TOMLQuotedKey(workdir) + `.trust_level="trusted"`
+	return "cd " + ShellQuote(workdir) + " && " + ShellQuote(codexBin) + " -c " + ShellQuote(trustOverride) + " " + ShellQuote(prompt)
 }
 
 func ShellQuote(value string) string {
 	return "'" + strings.ReplaceAll(value, "'", "'\\''") + "'"
+}
+
+func TOMLQuotedKey(value string) string {
+	escaped := strings.ReplaceAll(value, `\`, `\\`)
+	escaped = strings.ReplaceAll(escaped, `"`, `\"`)
+	return `"` + escaped + `"`
 }

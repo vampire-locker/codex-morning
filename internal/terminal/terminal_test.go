@@ -16,7 +16,15 @@ func TestShellQuote(t *testing.T) {
 
 func TestBuildShellCommand(t *testing.T) {
 	got := BuildShellCommand("/Users/me/project", "/opt/homebrew/bin/codex", "codex，早上好")
-	want := "cd '/Users/me/project' && '/opt/homebrew/bin/codex' 'codex，早上好'"
+	want := `cd '/Users/me/project' && '/opt/homebrew/bin/codex' -c 'projects."/Users/me/project".trust_level="trusted"' 'codex，早上好'`
+	if got != want {
+		t.Fatalf("got %q, want %q", got, want)
+	}
+}
+
+func TestTOMLQuotedKey(t *testing.T) {
+	got := TOMLQuotedKey(`/Users/me/project "quoted"\path`)
+	want := `"/Users/me/project \"quoted\"\\path"`
 	if got != want {
 		t.Fatalf("got %q, want %q", got, want)
 	}
@@ -44,7 +52,7 @@ func TestWriteCommandFile(t *testing.T) {
 	required := []string{
 		"#!/bin/zsh",
 		`rm -f "$0"`,
-		"cd '/Users/me/project' && '/opt/homebrew/bin/codex' 'codex，早上好'",
+		`cd '/Users/me/project' && '/opt/homebrew/bin/codex' -c 'projects."/Users/me/project".trust_level="trusted"' 'codex，早上好'`,
 	}
 	for _, value := range required {
 		if !strings.Contains(string(content), value) {
