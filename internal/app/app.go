@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/vampire-locker/codex-morning/internal/codexcfg"
 	"github.com/vampire-locker/codex-morning/internal/i18n"
 	"github.com/vampire-locker/codex-morning/internal/launchd"
 	"github.com/vampire-locker/codex-morning/internal/terminal"
@@ -73,6 +74,12 @@ func Install(opts InstallOptions) error {
 		exe = resolved
 	}
 
+	if !opts.DryRun {
+		if _, err := codexcfg.EnsureProjectTrusted(workdir); err != nil {
+			return err
+		}
+	}
+
 	agent := launchd.Agent{
 		Label: opts.Label,
 		ProgramArguments: []string{
@@ -125,7 +132,8 @@ func Install(opts InstallOptions) error {
 	}
 	fmt.Printf(i18n.Text("工作目录：%s\n", "Workdir: %s\n"), workdir)
 	fmt.Printf(i18n.Text("plist 文件：%s\n", "Plist: %s\n"), path)
-	fmt.Println(i18n.Text("定时启动会把当前工作目录作为 Codex trusted project 传入，请只为你信任的目录安装任务。", "Scheduled launches pass the workdir to Codex as a trusted project. Install jobs only for directories you trust."))
+	fmt.Printf(i18n.Text("Codex 配置：%s\n", "Codex config: %s\n"), codexcfg.ConfigPath())
+	fmt.Println(i18n.Text("已将工作目录写入 Codex trusted project（config.toml），并在启动时附带一次性 trust 覆盖。请只为你信任的目录安装任务。", "Marked the workdir as a trusted Codex project in config.toml and still pass a one-off trust override at launch. Install jobs only for directories you trust."))
 	return nil
 }
 
@@ -138,6 +146,9 @@ func RunOnce(opts RunOptions) error {
 	}
 	workdir, err := resolveWorkdir(opts.Workdir)
 	if err != nil {
+		return err
+	}
+	if _, err := codexcfg.EnsureProjectTrusted(workdir); err != nil {
 		return err
 	}
 	return terminal.OpenCodex(workdir, resolveCodexBin(opts.CodexBin), opts.Prompt)

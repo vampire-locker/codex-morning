@@ -101,7 +101,7 @@ codex-morning install --weekdays-only
 
 安装器会把工作目录写入 LaunchAgent。不要在 `~/Downloads` 这类宽泛的下载目录里直接安装。
 
-为了支持无人值守启动，`codex-morning` 会在启动 Codex 时通过一次性配置覆盖把该工作目录作为 trusted project 传入，从而避免定时任务停在目录信任提示上。请只为你信任的项目目录安装任务，因为 trusted project 允许 Codex 加载项目级 `.codex/config.toml`、hooks 和 rules。
+为了支持无人值守启动，`codex-morning` 会在 `install` / `run-once` 时把工作目录持久写入 `~/.codex/config.toml`（或 `$CODEX_HOME/config.toml`）的 trusted project，并在启动 Codex 时再附带一次 `-c` 覆盖。仅靠运行时 `-c` 在当前 Codex 交互模式下往往仍会停在目录信任提示；持久写入后一般就不会再询问。请只为你信任的项目目录安装任务，因为 trusted project 允许 Codex 加载项目级 `.codex/config.toml`、hooks 和 rules。
 
 ## 常用命令
 
@@ -114,13 +114,20 @@ codex-morning doctor
 codex-morning uninstall
 ```
 
-`run-once` 会立即打开一个新的 Terminal 窗口，并使用当前系统语言对应的默认提示词运行 Codex，同时把工作目录作为 trusted project 传给 Codex。例如中文系统会运行类似：
+`run-once` 会先把工作目录标记为 Codex trusted project（写入用户 `config.toml`），再打开新的 Terminal 窗口，并用当前系统语言对应的默认提示词启动 Codex。例如中文系统会运行类似：
 
 ```bash
 codex -c 'projects."/path/to/your/project".trust_level="trusted"' "codex，早上好"
 ```
 
-其他语言系统默认会运行 `codex "codex, good morning"`。
+对应 `config.toml` 片段：
+
+```toml
+[projects."/path/to/your/project"]
+trust_level = "trusted"
+```
+
+其他语言系统默认提示词为 `codex, good morning`。
 
 `uninstall` 会卸载并删除 LaunchAgent。
 

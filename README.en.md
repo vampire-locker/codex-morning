@@ -101,7 +101,7 @@ codex-morning install --weekdays-only
 
 The installer stores the working directory in the LaunchAgent. Avoid installing from broad download folders such as `~/Downloads`.
 
-To support unattended startup, `codex-morning` passes the workdir to Codex as a trusted project through a one-off configuration override. This prevents scheduled runs from stopping at the directory trust prompt. Install jobs only for project directories you trust, because a trusted project lets Codex load project-local `.codex/config.toml`, hooks, and rules.
+To support unattended startup, `codex-morning` persists the workdir as a trusted project in `~/.codex/config.toml` (or `$CODEX_HOME/config.toml`) during `install` / `run-once`, and still passes a one-off `-c` override when launching Codex. A runtime `-c` override alone is often not enough to skip the interactive directory trust prompt in current Codex builds; persisting trust usually is. Install jobs only for project directories you trust, because a trusted project lets Codex load project-local `.codex/config.toml`, hooks, and rules.
 
 ## Useful Commands
 
@@ -114,13 +114,20 @@ codex-morning doctor
 codex-morning uninstall
 ```
 
-`run-once` opens a new Terminal window immediately and runs Codex with the default prompt for the current system language, while passing the workdir as a trusted project. For example, on a Chinese system it runs something like:
+`run-once` first marks the workdir as a trusted Codex project in the user `config.toml`, then opens a new Terminal window and starts Codex with the default prompt for the current system language. For example, on a Chinese system it runs something like:
 
 ```bash
 codex -c 'projects."/path/to/your/project".trust_level="trusted"' "codex，早上好"
 ```
 
-On other system languages, the default is `codex "codex, good morning"`.
+with a matching config fragment:
+
+```toml
+[projects."/path/to/your/project"]
+trust_level = "trusted"
+```
+
+On other system languages, the default prompt is `codex, good morning`.
 
 `uninstall` unloads and removes the LaunchAgent.
 
